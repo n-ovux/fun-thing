@@ -21,12 +21,13 @@ int main()
     exit(1);
 
   Camera3D camera   = {0};
-  camera.position   = (Vector3){0.0f, 10.0f, 0.0f};
+  camera.position   = (Vector3){0.0f, 0.0f, 0.0f};
   camera.target     = (Vector3){0.0f, 0.0f, 0.0f};
   camera.up         = (Vector3){0.0f, 0.0f, 1.0f};
   camera.fovy       = 45.0f;
   camera.projection = CAMERA_PERSPECTIVE;
-  Vector2 position  = (Vector2){0.0f, 0.0f};
+  float zoom        = 10.0f;
+  Vector2 position  = (Vector2){PI / 4, PI / 4};
 
   Vector3 cube_position = (Vector3){0.0f, 0.0f, 0.0f};
 
@@ -35,23 +36,17 @@ int main()
 
   while (!WindowShouldClose())
     {
-      camera.position = (Vector3){10 * cos(position.x) * cos(position.y), 10 * sin(position.x) * cos(position.y), 10 * sin(position.y)};
+      float sensitivity = 3.0f;
+      zoom              = (zoom >= 1) ? zoom - GetMouseWheelMove() : 1;
       if (IsKeyDown(KEY_D))
-        {
-          position.x += 5.0f * GetFrameTime();
-        }
+        position.x += sensitivity * GetFrameTime();
       else if (IsKeyDown(KEY_A))
-        {
-          position.x -= 5.0f * GetFrameTime();
-        }
+        position.x -= sensitivity * GetFrameTime();
       if (IsKeyDown(KEY_W))
-        {
-          position.y = (position.y > PI / 2) ? position.y = PI / 2 : position.y + 5.0f * GetFrameTime();
-        }
+        position.y = (position.y > PI / 2) ? position.y = PI / 2 : position.y + sensitivity * GetFrameTime();
       else if (IsKeyDown(KEY_S))
-        {
-          position.y = (position.y < -PI / 2) ? position.y = -PI / 2 : position.y - 5.0f * GetFrameTime();
-        }
+        position.y = (position.y < -PI / 2) ? position.y = -PI / 2 : position.y - sensitivity * GetFrameTime();
+      camera.position = (Vector3){zoom * cos(position.x) * cos(position.y), zoom * sin(position.x) * cos(position.y), zoom * sin(position.y)};
 
       BeginDrawing();
       ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
@@ -62,9 +57,10 @@ int main()
 
       DrawCube(cube_position, 2.0f, 2.0f, 2.0f, WHITE);
       DrawCubeWires(cube_position, 2.0f, 2.0f, 2.0f, MAROON);
-      DrawPoint3D((Vector3){1.0f, 0.0f, 0.0f}, RED);
-      DrawPoint3D((Vector3){0.0f, 1.0f, 0.0f}, BLUE);
-      DrawPoint3D((Vector3){0.0f, 0.0f, 1.0f}, GREEN);
+      rlPushMatrix();
+      rlRotatef(90, 1, 0, 0);
+      DrawGrid(10, 1.0f);
+      rlPopMatrix();
 
       EndMode3D();
       EndTextureMode();
