@@ -2,4 +2,4 @@
 CC=clang
 CXX=clang++
 
-cmake --build ./build -j 16
+cmake --build . -j 16

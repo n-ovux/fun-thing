@@ -6,6 +6,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(fun LANGUAGES CXX)
 
 find_package(raylib REQUIRED)
+find_package(GLEW REQUIRED)
+
 include(FetchContent)
 FetchContent_Declare(
   raygui
@@ -13,9 +15,11 @@ FetchContent_Declare(
   GIT_TAG master
 )
 FetchContent_MakeAvailable(raygui)
-find_package(GLEW REQUIRED)
+
 
 add_executable(fun ${SRC}/main.cpp)
-target_link_libraries(fun raylib)
+
+target_compile_options(fun PRIVATE -Wno-narrowing)
 target_include_directories(fun PRIVATE ${raygui_SOURCE_DIR}/src/)
+target_link_libraries(fun raylib)
 target_link_libraries(fun GLEW)
