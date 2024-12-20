@@ -6,7 +6,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(fun LANGUAGES CXX)
 
 find_package(raylib REQUIRED)
-find_package(GLEW REQUIRED)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -31,4 +30,3 @@ target_include_directories(fun PRIVATE ${raygui_SOURCE_DIR}/src/)
 target_include_directories(fun PRIVATE ${serialib_SOURCE_DIR}/lib/)
 target_link_libraries(fun serialib)
 target_link_libraries(fun raylib)
-target_link_libraries(fun GLEW)

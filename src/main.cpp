@@ -1,7 +1,6 @@
 #include <cmath>
 #include <string>
 
-#include <GL/glew.h>
 #include <raylib.h>
 #include <rlgl.h>
 #include <serialib.h>
@@ -19,9 +18,6 @@ int main()
   InitWindow(WIDTH, HEIGHT, "fun");
   SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
   GuiLoadStyleDark();
-
-  if (glewInit() != GLEW_OK)
-    exit(1);
 
   Camera3D camera   = {0};
   camera.position   = (Vector3){0.0f, 0.0f, 0.0f};
@@ -95,6 +91,8 @@ int main()
       EndDrawing();
     }
 
+  CloseWindow();
   serial.closeDevice();
+
   return 0;
 }
