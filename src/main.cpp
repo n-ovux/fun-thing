@@ -1,7 +1,10 @@
-#include <GL/glew.h>
 #include <cmath>
+#include <string>
+
+#include <GL/glew.h>
 #include <raylib.h>
 #include <rlgl.h>
+#include <serialib.h>
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
@@ -34,6 +37,14 @@ int main()
   float factor                         = 0.1;
   RenderTexture2D visualization_screen = LoadRenderTexture(WIDTH, HEIGHT);
 
+  float value1 = 0.0f;
+  float value2 = 0.0f;
+
+  serialib serial;
+  if (serial.openDevice("/dev/ttyACM0", 9600) != 1)
+    exit(2);
+  serial.writeChar(50);
+
   while (!WindowShouldClose())
     {
       float sensitivity = 3.0f;
@@ -46,6 +57,12 @@ int main()
         position.y = (position.y > PI / 2) ? position.y = PI / 2 : position.y + sensitivity * GetFrameTime();
       else if (IsKeyDown(KEY_S))
         position.y = (position.y < -PI / 2) ? position.y = -PI / 2 : position.y - sensitivity * GetFrameTime();
+      if (IsKeyDown(KEY_ZERO))
+        {
+          position.x = PI / 4;
+          position.y = PI / 4;
+          zoom       = 10;
+        }
       camera.position = (Vector3){zoom * cos(position.x) * cos(position.y), zoom * sin(position.x) * cos(position.y), zoom * sin(position.y)};
 
       BeginDrawing();
@@ -65,12 +82,19 @@ int main()
       EndMode3D();
       EndTextureMode();
 
+      GuiSlider((Rectangle){0, HEIGHT - 50, 500, 25}, NULL, std::to_string(value1).c_str(), &value1, 0.0f, 1.0f);
+      GuiSlider((Rectangle){0, HEIGHT - 25, 500, 25}, NULL, std::to_string(value2).c_str(), &value2, 0.0f, 1.0f);
       GuiPanel((Rectangle){factor * WIDTH, factor * HEIGHT, (1 - 2 * factor) * WIDTH, (1 - 2 * factor) * HEIGHT}, "Visualization");
       DrawTextureRec(visualization_screen.texture,
                      (Rectangle){factor * WIDTH, factor * HEIGHT, (1 - 2 * factor) * WIDTH - 2, -(1 - 2 * factor) * HEIGHT + 25},
                      (Vector2){factor * WIDTH + 1, factor * HEIGHT + 24}, WHITE);
 
+      if (GuiButton((Rectangle){0, 0, 100, 50}, "Toggle LED"))
+        serial.writeChar(50);
+
       EndDrawing();
     }
+
+  serial.closeDevice();
   return 0;
 }
