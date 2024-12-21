@@ -6,19 +6,35 @@ include(FetchContent)
 project(fun LANGUAGES CXX C)
 add_executable(fun ./src/main.cpp)
 target_compile_options(fun PRIVATE -Wno-narrowing) # Required for raygui
+target_compile_options(fun PRIVATE -Wno-enum-compare) # Optional for raygui
 
 # Add Raylib
-find_package(raylib REQUIRED)
-target_link_libraries(fun raylib)
-
-# Add Raygui
 FetchContent_Declare(
-  raygui
-  GIT_REPOSITORY https://github.com/raysan5/raygui
+  raylib
+  GIT_REPOSITORY https://github.com/raysan5/raylib
   GIT_TAG master
 )
-FetchContent_MakeAvailable(raygui)
-target_include_directories(fun PRIVATE ${raygui_SOURCE_DIR}/src/)
+FetchContent_MakeAvailable(raylib)
+target_link_libraries(fun raylib)
+
+
+# Add Raygui
+# FetchContent_Declare(
+#   raygui
+#   GIT_REPOSITORY https://github.com/raysan5/raygui
+#   GIT_TAG master
+# )
+# FetchContent_MakeAvailable(raygui)
+# target_include_directories(fun PRIVATE ${raygui_SOURCE_DIR}/src/)
+
+# Add clay
+FetchContent_Declare(
+  clay
+  GIT_REPOSITORY https://github.com/nicbarker/clay
+  GIT_TAG main
+)
+FetchContent_MakeAvailable(clay)
+target_include_directories(fun PRIVATE ${clay_SOURCE_DIR}/)
 
 # Add serialib
 FetchContent_Declare(
